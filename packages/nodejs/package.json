@@ -1,6 +1,6 @@
 {
   "name": "@thesaasdevkit/observability-kit",
-  "version": "1.0.0",
+  "version": "1.0.2",
   "description": "Lightweight observability starter kit for Node.js and Express applications",
   "main": "dist/index.cjs.js",
   "module": "dist/index.esm.js",
