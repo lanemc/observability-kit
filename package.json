@@ -1,0 +1,25 @@
+{
+  "name": "observability-kit-workspace",
+  "version": "1.0.0",
+  "private": true,
+  "description": "Lightweight Observability Starter Kit - Monorepo",
+  "workspaces": [
+    "packages/*",
+    "dashboard",
+    "cli"
+  ],
+  "scripts": {
+    "build": "npm run build --workspaces",
+    "test": "npm run test --workspaces",
+    "lint": "npm run lint --workspaces",
+    "dev": "npm run dev --workspaces",
+    "clean": "rm -rf node_modules packages/*/node_modules dashboard/node_modules cli/node_modules"
+  },
+  "keywords": ["observability", "monitoring", "telemetry", "nodejs", "python", "express", "fastapi"],
+  "license": "MIT",
+  "devDependencies": {
+    "eslint": "^8.0.0",
+    "prettier": "^3.0.0",
+    "jest": "^29.0.0"
+  }
+}

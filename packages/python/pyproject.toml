@@ -1,0 +1,149 @@
+[build-system]
+requires = ["setuptools>=45", "wheel", "setuptools-scm[toml]>=6.2"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "lite-observability"
+version = "1.0.0"
+description = "Lightweight observability starter kit for Python and FastAPI applications"
+readme = "README.md"
+license = {text = "MIT"}
+authors = [
+    {name = "Observability Kit Team", email = "team@observability-kit.dev"}
+]
+maintainers = [
+    {name = "Observability Kit Team", email = "team@observability-kit.dev"}
+]
+keywords = [
+    "observability",
+    "monitoring", 
+    "telemetry",
+    "python",
+    "fastapi",
+    "opentelemetry",
+    "metrics",
+    "tracing",
+    "performance"
+]
+classifiers = [
+    "Development Status :: 4 - Beta",
+    "Intended Audience :: Developers",
+    "License :: OSI Approved :: MIT License",
+    "Operating System :: OS Independent",
+    "Programming Language :: Python :: 3",
+    "Programming Language :: Python :: 3.9",
+    "Programming Language :: Python :: 3.10",
+    "Programming Language :: Python :: 3.11",
+    "Programming Language :: Python :: 3.12",
+    "Topic :: Software Development :: Libraries :: Python Modules",
+    "Topic :: System :: Monitoring",
+]
+requires-python = ">=3.9"
+dependencies = [
+    "opentelemetry-api>=1.21.0",
+    "opentelemetry-sdk>=1.21.0",
+    "opentelemetry-instrumentation>=0.42b0",
+    "opentelemetry-instrumentation-fastapi>=0.42b0",
+    "opentelemetry-instrumentation-starlette>=0.42b0",
+    "opentelemetry-instrumentation-asgi>=0.42b0",
+    "opentelemetry-instrumentation-httpx>=0.42b0",
+    "opentelemetry-instrumentation-requests>=0.42b0",
+    "opentelemetry-instrumentation-urllib>=0.42b0",
+    "opentelemetry-instrumentation-urllib3>=0.42b0",
+    "opentelemetry-instrumentation-sqlalchemy>=0.42b0",
+    "opentelemetry-instrumentation-psycopg2>=0.42b0",
+    "opentelemetry-instrumentation-pymongo>=0.42b0",
+    "opentelemetry-instrumentation-redis>=0.42b0",
+    "opentelemetry-exporter-otlp-proto-http>=1.21.0",
+    "opentelemetry-exporter-prometheus>=1.12.0rc1",
+    "opentelemetry-exporter-jaeger-proto-grpc>=1.21.0",
+    "fastapi>=0.100.0",
+    "uvicorn[standard]>=0.23.0",
+    "starlette>=0.27.0",
+    "psutil>=5.9.0",
+    "websockets>=11.0.0",
+    "aiofiles>=23.0.0",
+]
+
+[project.optional-dependencies]
+dev = [
+    "pytest>=7.4.0",
+    "pytest-asyncio>=0.21.0",
+    "pytest-cov>=4.1.0",
+    "black>=23.0.0",
+    "isort>=5.12.0",
+    "flake8>=6.0.0",
+    "mypy>=1.5.0",
+    "pre-commit>=3.4.0",
+]
+test = [
+    "pytest>=7.4.0",
+    "pytest-asyncio>=0.21.0",
+    "pytest-cov>=4.1.0",
+    "httpx>=0.24.0",
+    "requests>=2.31.0",
+]
+
+[project.urls]
+Homepage = "https://github.com/observability-kit/observability-kit"
+Repository = "https://github.com/observability-kit/observability-kit"
+Documentation = "https://github.com/observability-kit/observability-kit/blob/main/docs"
+"Bug Tracker" = "https://github.com/observability-kit/observability-kit/issues"
+
+[project.scripts]
+lite-obs = "lite_observability.cli:main"
+
+[tool.setuptools]
+package-dir = {"" = "src"}
+
+[tool.setuptools.packages.find]
+where = ["src"]
+
+[tool.black]
+line-length = 88
+target-version = ['py39']
+include = '\.pyi?$'
+extend-exclude = '''
+/(
+  # directories
+  \.eggs
+  | \.git
+  | \.hg
+  | \.mypy_cache
+  | \.tox
+  | \.venv
+  | build
+  | dist
+)/
+'''
+
+[tool.isort]
+profile = "black"
+line_length = 88
+multi_line_output = 3
+
+[tool.mypy]
+python_version = "3.9"
+warn_return_any = true
+warn_unused_configs = true
+disallow_untyped_defs = true
+disallow_incomplete_defs = true
+check_untyped_defs = true
+disallow_untyped_decorators = true
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+python_files = ["test_*.py", "*_test.py"]
+python_classes = ["Test*"]
+python_functions = ["test_*"]
+addopts = [
+    "--strict-markers",
+    "--strict-config",
+    "--cov=lite_observability",
+    "--cov-report=html",
+    "--cov-report=term-missing:skip-covered",
+]
+markers = [
+    "slow: marks tests as slow (deselect with '-m \"not slow\"')",
+    "integration: marks tests as integration tests",
+]

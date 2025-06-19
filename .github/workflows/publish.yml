@@ -1,0 +1,108 @@
+name: Publish to NPM
+
+on:
+  push:
+    tags:
+      - 'v*'
+  workflow_dispatch:
+    inputs:
+      package:
+        description: 'Package to publish'
+        required: true
+        default: 'nodejs'
+        type: choice
+        options:
+        - nodejs
+        - all
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        node-version: [18.x, 20.x]
+    
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v4
+      
+    - name: Setup Node.js ${{ matrix.node-version }}
+      uses: actions/setup-node@v4
+      with:
+        node-version: ${{ matrix.node-version }}
+        cache: 'npm'
+        
+    - name: Install dependencies
+      run: npm ci
+      
+    - name: Run linting
+      run: npm run lint
+      
+    - name: Run tests
+      run: npm test
+
+  publish-nodejs:
+    needs: test
+    runs-on: ubuntu-latest
+    if: startsWith(github.ref, 'refs/tags/') || (github.event_name == 'workflow_dispatch' && (github.event.inputs.package == 'nodejs' || github.event.inputs.package == 'all'))
+    
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v4
+      
+    - name: Setup Node.js
+      uses: actions/setup-node@v4
+      with:
+        node-version: '20.x'
+        registry-url: 'https://registry.npmjs.org'
+        cache: 'npm'
+        
+    - name: Install dependencies
+      run: npm ci
+      
+    - name: Install package dependencies
+      run: cd packages/nodejs && npm ci
+      
+    - name: Run tests (final check)
+      run: cd packages/nodejs && npm test
+      
+    - name: Build package
+      run: cd packages/nodejs && npm run build:prod
+      
+    - name: Publish to NPM
+      run: cd packages/nodejs && npm publish
+      env:
+        NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN_SAAS_DEV_KIT }}
+
+  create-release:
+    needs: [test, publish-nodejs]
+    runs-on: ubuntu-latest
+    if: startsWith(github.ref, 'refs/tags/')
+    
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v4
+      
+    - name: Create GitHub Release
+      uses: actions/create-release@v1
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      with:
+        tag_name: ${{ github.ref }}
+        release_name: Release ${{ github.ref }}
+        body: |
+          ## Changes in this Release
+          
+          ### @thesaasdevkit/observability-kit
+          - Published version ${{ github.ref }} to NPM
+          - View on NPM: https://www.npmjs.com/package/@thesaasdevkit/observability-kit
+          
+          ### Installation
+          ```bash
+          npm install @thesaasdevkit/observability-kit
+          ```
+          
+          ### What's Changed
+          See commit history for detailed changes.
+        draft: false
+        prerelease: false
