@@ -1,4 +1,4 @@
-const { performance, PerformanceObserver } = require('perf_hooks');
+const { PerformanceObserver } = require('perf_hooks');
 const { monitorEventLoopDelay } = require('perf_hooks');
 const pidusage = require('pidusage');
 const si = require('systeminformation');

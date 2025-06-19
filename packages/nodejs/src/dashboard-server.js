@@ -58,7 +58,7 @@ class DashboardServer {
       path: '/ws'
     });
     
-    this.wss.on('connection', (ws, req) => {
+    this.wss.on('connection', (ws, _req) => {
       console.log('[Dashboard] WebSocket client connected');
       this.clients.add(ws);
       
@@ -565,14 +565,14 @@ class DashboardServer {
    */
   _handleWebSocketMessage(ws, message) {
     switch (message.type) {
-      case 'ping':
-        this._sendToClient(ws, { type: 'pong' });
-        break;
-      case 'subscribe':
-        // Handle subscription to specific events
-        break;
-      default:
-        console.warn('[Dashboard] Unknown WebSocket message type:', message.type);
+    case 'ping':
+      this._sendToClient(ws, { type: 'pong' });
+      break;
+    case 'subscribe':
+      // Handle subscription to specific events
+      break;
+    default:
+      console.warn('[Dashboard] Unknown WebSocket message type:', message.type);
     }
   }
 
